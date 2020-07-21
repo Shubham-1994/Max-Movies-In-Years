@@ -28,38 +28,41 @@ function formMovieYearMap(allMovies) {
     // iterating over the movies collection to store the key(year) value(count of movie) in the map object. 
     allMovies.forEach(movie => {
 
-        let license = [...movie.license];
+        if (movie.license.length > 0) {
+            
+            let license = [...movie.license];
 
-        // the reason i am taking the difference is to find the intermediate years between the start and end year
-        let yearDiff = license[1] - license[0];
+            // the reason i am taking the difference is to find the intermediate years between the start and end year
+            let yearDiff = license[1] - license[0];
 
-        // if the start and end year is same we need only one year
-        if(yearDiff == 0){
-            license.pop();
+            // if the start and end year is same we need only one year
+            if (yearDiff == 0) {
+                license.pop();
+            }
+
+            // only when the difference is more than 1 we need to find the intermediate years
+            if (yearDiff > 1) {
+                while (yearDiff > 1) {
+                    license.push(license[license.length - 1] - 1); // we dont need to sort the list cause anyway we just need the years.
+                    yearDiff = yearDiff - 1;
+                }
+            }
+
+            // iterating over the license collection having years for each movie object
+            license.forEach(year => {
+                if (movieYearMap.has(year)) {
+                    let noOfMovies = movieYearMap.get(year);
+                    movieYearMap.set(year, noOfMovies + 1);
+                }
+                else {
+                    movieYearMap.set(year, 1);
+                }
+            });
         }
-        
-        // only when the difference is more than 1 we need to find the intermediate years
-        if (yearDiff > 1) {
-            while (yearDiff > 1) {
-                license.push(license[license.length - 1] - 1); // we dont need to sort the list cause anyway we just need the years.
-                yearDiff = yearDiff - 1;
-            }
-        }
-
-        // iterating over the license collection having years for each movie object
-        license.forEach(year => {
-            if (movieYearMap.has(year)) {
-                let noOfMovies = movieYearMap.get(year);
-                movieYearMap.set(year, noOfMovies + 1);
-            }
-            else {
-                movieYearMap.set(year, 1);
-            }
-        });
     });
 
     return movieYearMap;
-    
+
 }
 //#endregion
 
